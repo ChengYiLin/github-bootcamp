@@ -1,15 +1,60 @@
 "use strict";
 
 const storageKey = "todo-list";
+const themeStorageKey = "todo-theme";
 const form = document.querySelector("#todo-form");
 const input = document.querySelector("#todo-input");
 const list = document.querySelector("#todo-list");
 const emptyMessage = document.querySelector("#empty-message");
 const remainingCount = document.querySelector("#remaining-count");
 const storageMessage = document.querySelector("#storage-message");
+const themeMessage = document.querySelector("#theme-message");
+const themeToggle = document.querySelector("#theme-toggle");
+const filterButtons = document.querySelectorAll(".filter-button");
+const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
 
 let todos = [];
 let canSave = true;
+let selectedFilter = "all";
+let manualTheme = null;
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  themeToggle.textContent = theme === "dark" ? "☀️ 淺色模式" : "🌙 深色模式";
+  themeToggle.setAttribute("aria-pressed", String(theme === "dark"));
+}
+
+function loadTheme() {
+  try {
+    const savedTheme = localStorage.getItem(themeStorageKey);
+    if (savedTheme !== null && savedTheme !== "light" && savedTheme !== "dark") {
+      throw new Error("主題資料格式不正確");
+    }
+    manualTheme = savedTheme;
+  } catch (error) {
+    console.error("無法讀取主題設定：", error);
+    themeMessage.textContent = "無法讀取主題設定，將使用系統的深淺色設定。";
+    themeMessage.hidden = false;
+  }
+  applyTheme(manualTheme || (systemTheme.matches ? "dark" : "light"));
+}
+
+themeToggle.addEventListener("click", () => {
+  manualTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  applyTheme(manualTheme);
+  try {
+    localStorage.setItem(themeStorageKey, manualTheme);
+    themeMessage.hidden = true;
+  } catch (error) {
+    console.error("無法儲存主題設定：", error);
+    themeMessage.textContent = "無法儲存主題設定，重新整理後可能會恢復原本的設定。";
+    themeMessage.hidden = false;
+  }
+});
+
+systemTheme.addEventListener("change", (event) => {
+  if (manualTheme === null) applyTheme(event.matches ? "dark" : "light");
+});
 
 function showStorageError(message) {
   storageMessage.textContent = message;
@@ -49,10 +94,20 @@ function saveTodos() {
 
 function renderTodos() {
   list.replaceChildren();
-  emptyMessage.hidden = todos.length > 0;
+  const visibleTodos = todos
+    .map((todo, index) => ({ todo, index }))
+    .filter(({ todo }) =>
+      selectedFilter === "all" || (selectedFilter === "completed" ? todo.completed : !todo.completed)
+    );
+  emptyMessage.hidden = visibleTodos.length > 0;
+  emptyMessage.textContent = {
+    all: "還沒有任何待辦事項,新增一個吧!",
+    active: "沒有未完成的待辦事項。",
+    completed: "沒有已完成的待辦事項。"
+  }[selectedFilter];
   remainingCount.textContent = `未完成:${todos.filter((todo) => !todo.completed).length} 項`;
 
-  todos.forEach((todo, index) => {
+  visibleTodos.forEach(({ todo, index }) => {
     const item = document.createElement("li");
     item.className = "todo-item";
     item.classList.toggle("completed", todo.completed);
@@ -87,6 +142,16 @@ function renderTodos() {
   });
 }
 
+filterButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    selectedFilter = button.dataset.filter;
+    filterButtons.forEach((filterButton) => {
+      filterButton.setAttribute("aria-pressed", String(filterButton === button));
+    });
+    renderTodos();
+  });
+});
+
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   const text = input.value.trim();
@@ -99,5 +164,6 @@ form.addEventListener("submit", (event) => {
   input.focus();
 });
 
+loadTheme();
 loadTodos();
 renderTodos();

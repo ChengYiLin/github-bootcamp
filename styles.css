@@ -6,10 +6,26 @@
   --muted: #788880;
   --accent: #527b65;
   --accent-hover: #3e6650;
+  --accent-text: #ffffff;
   --border: #e4ebe5;
   --input-bg: #f8faf8;
   --danger: #a64e4e;
   --shadow: 0 16px 45px rgba(38, 58, 51, 0.09);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page-bg: #171f1b;
+  --card-bg: #24312a;
+  --text: #e7f0e9;
+  --muted: #b1c2b6;
+  --accent: #a4d1b3;
+  --accent-hover: #c1e3cc;
+  --accent-text: #172b1e;
+  --border: #42564a;
+  --input-bg: #1c2821;
+  --danger: #ffb4a9;
+  --shadow: 0 16px 45px rgba(0, 0, 0, 0.3);
 }
 
 * {
@@ -36,6 +52,23 @@ body {
   border-radius: 20px;
   background: var(--card-bg);
   box-shadow: var(--shadow);
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.theme-toggle {
+  flex: none;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 0.875rem;
 }
 
 .eyebrow {
@@ -89,12 +122,35 @@ button {
   border: 0;
   border-radius: 10px;
   background: var(--accent);
-  color: var(--card-bg);
+  color: var(--accent-text);
   font-weight: 700;
 }
 
 .add-button:hover {
   background: var(--accent-hover);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.filter-button {
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 0.875rem;
+}
+
+.filter-button[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 700;
 }
 
 :focus-visible {
@@ -109,7 +165,7 @@ button {
 }
 
 .list-section {
-  margin-top: 24px;
+  margin-top: 20px;
   border-top: 1px solid var(--border);
 }
 
