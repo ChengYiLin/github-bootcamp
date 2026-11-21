@@ -7,6 +7,7 @@ const input = document.querySelector("#todo-input");
 const list = document.querySelector("#todo-list");
 const emptyMessage = document.querySelector("#empty-message");
 const remainingCount = document.querySelector("#remaining-count");
+const clearCompletedButton = document.querySelector("#clear-completed");
 const storageMessage = document.querySelector("#storage-message");
 const themeMessage = document.querySelector("#theme-message");
 const themeToggle = document.querySelector("#theme-toggle");
@@ -106,6 +107,7 @@ function renderTodos() {
     completed: "目前沒有已完成的事項。取消勾選的項目仍保留在「全部」中。"
   }[selectedFilter];
   remainingCount.textContent = `未完成:${todos.filter((todo) => !todo.completed).length} 項`;
+  clearCompletedButton.disabled = !todos.some((todo) => todo.completed);
 
   visibleTodos.forEach(({ todo, index }) => {
     const item = document.createElement("li");
@@ -150,6 +152,14 @@ filterButtons.forEach((button) => {
     });
     renderTodos();
   });
+});
+
+clearCompletedButton.addEventListener("click", () => {
+  if (!window.confirm("確定要清除所有已完成的事項嗎？此操作無法復原。")) return;
+
+  todos = todos.filter((todo) => !todo.completed);
+  saveTodos();
+  renderTodos();
 });
 
 form.addEventListener("submit", (event) => {
