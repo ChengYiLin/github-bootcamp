@@ -103,7 +103,7 @@ function renderTodos() {
   emptyMessage.textContent = {
     all: "還沒有任何待辦事項,新增一個吧!",
     active: "沒有未完成的待辦事項。",
-    completed: "沒有已完成的待辦事項。"
+    completed: "目前沒有已完成的事項。取消勾選的項目仍保留在「全部」中。"
   }[selectedFilter];
   remainingCount.textContent = `未完成:${todos.filter((todo) => !todo.completed).length} 項`;
 
