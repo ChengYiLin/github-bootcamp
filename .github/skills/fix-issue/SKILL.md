@@ -1,9 +1,9 @@
 ---
-agent: "agent"
+name: fix-issue
 description: "依 GitHub issue 編號修正待辦清單 App,並自動開出 Pull Request"
+disable-model-invocation: true
 argument-hint: "issueNumber=3"
 ---
-
 # 任務:修好一個 GitHub Issue 並開 PR
 
 你要處理本 repo 的 issue **#${input:issueNumber:要修的 issue 編號}**。
