@@ -8,6 +8,7 @@
   --accent-hover: #3e6650;
   --accent-text: #ffffff;
   --border: #e4ebe5;
+  --control-border: var(--border);
   --input-bg: #f8faf8;
   --danger: #a64e4e;
   --shadow: 0 16px 45px rgba(38, 58, 51, 0.09);
@@ -23,6 +24,7 @@
   --accent-hover: #c1e3cc;
   --accent-text: #172b1e;
   --border: #42564a;
+  --control-border: #81988a;
   --input-bg: #1c2821;
   --danger: #ffb4a9;
   --shadow: 0 16px 45px rgba(0, 0, 0, 0.3);
@@ -64,7 +66,7 @@ body {
 .theme-toggle {
   flex: none;
   padding: 8px 10px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--control-border);
   border-radius: 10px;
   background: var(--input-bg);
   color: var(--text);
@@ -103,7 +105,7 @@ button, input {
   min-width: 0;
   flex: 1;
   padding: 12px 14px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--control-border);
   border-radius: 10px;
   background: var(--input-bg);
   color: var(--text);
@@ -139,7 +141,7 @@ button {
 
 .filter-button {
   padding: 7px 12px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--control-border);
   border-radius: 8px;
   background: var(--input-bg);
   color: var(--text);
