@@ -2,6 +2,7 @@
 
 const storageKey = "todo-list";
 const themeStorageKey = "todo-theme";
+const filterStorageKey = "todo-filter";
 const form = document.querySelector("#todo-form");
 const input = document.querySelector("#todo-input");
 const list = document.querySelector("#todo-list");
@@ -10,6 +11,7 @@ const remainingCount = document.querySelector("#remaining-count");
 const clearCompletedButton = document.querySelector("#clear-completed");
 const storageMessage = document.querySelector("#storage-message");
 const themeMessage = document.querySelector("#theme-message");
+const filterMessage = document.querySelector("#filter-message");
 const themeToggle = document.querySelector("#theme-toggle");
 const filterButtons = document.querySelectorAll(".filter-button");
 const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
@@ -95,6 +97,9 @@ function saveTodos() {
 
 function renderTodos() {
   list.replaceChildren();
+  filterButtons.forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.filter === selectedFilter));
+  });
   const visibleTodos = todos
     .map((todo, index) => ({ todo, index }))
     .filter(({ todo }) =>
@@ -144,12 +149,32 @@ function renderTodos() {
   });
 }
 
+function loadFilter() {
+  try {
+    const savedFilter = localStorage.getItem(filterStorageKey);
+    if (savedFilter === null) return;
+    if (!["all", "active", "completed"].includes(savedFilter)) {
+      throw new Error("篩選設定格式不正確");
+    }
+    selectedFilter = savedFilter;
+  } catch (error) {
+    console.error("無法讀取篩選設定：", error);
+    filterMessage.textContent = "無法讀取篩選設定，將顯示全部事項。";
+    filterMessage.hidden = false;
+  }
+}
+
 filterButtons.forEach((button) => {
   button.addEventListener("click", () => {
     selectedFilter = button.dataset.filter;
-    filterButtons.forEach((filterButton) => {
-      filterButton.setAttribute("aria-pressed", String(filterButton === button));
-    });
+    try {
+      localStorage.setItem(filterStorageKey, selectedFilter);
+      filterMessage.hidden = true;
+    } catch (error) {
+      console.error("無法儲存篩選設定：", error);
+      filterMessage.textContent = "無法儲存篩選設定，重新整理後可能會恢復原本的設定。";
+      filterMessage.hidden = false;
+    }
     renderTodos();
   });
 });
@@ -176,4 +201,5 @@ form.addEventListener("submit", (event) => {
 
 loadTheme();
 loadTodos();
+loadFilter();
 renderTodos();
